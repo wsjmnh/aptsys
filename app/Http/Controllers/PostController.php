@@ -126,6 +126,16 @@ class PostController extends Controller
         return response()->json(['error' => 'Not Found']);
     }
 
+    public function postComments($id)
+    {
+        $post = Posts::find($id);
+        if($post)
+        {
+            return response()->json($post->all_comments);
+        }
+        return response()->json(['error' => 'Not Found']);
+    }
+
     public function deletePost($id)
     {
         $post = Posts::find($id);

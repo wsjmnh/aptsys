@@ -25,5 +25,6 @@ Route::group(['prefix'=>'api'], function(){
  	Route::get('/posts/{id}', 'PostController@getPost')->name('getPost');
  	Route::post('/posts', 'PostController@createPost')->name('createPost');
  	Route::delete('delete/posts/{id}', 'PostController@deletePost')->name('deletePost');
+ 	Route::get('/posts/{id}/comments', 'PostController@postComments')->name('getComments');
  	Route::post('/posts/{id}/comments', 'PostController@createPostComment')->name('createComments');
 });
