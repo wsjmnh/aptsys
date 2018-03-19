@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\Input;
 use App\Models\Posts;
 use App\Models\PostType;
 use App\Models\Document;
-use Illuminate\Support\Facades\Validator;
+// use Illuminate\Support\Facades\Validator;
 use DateTime;
+use Validator;
 
 class PostController extends Controller
 {
@@ -48,20 +49,32 @@ class PostController extends Controller
 
     public function createPost(Request $request)
     {
-        $post = new Posts;
-        $post->title = Input::get('title');
-        $post->content = Input::get('content');
-        $post->user_id = Input::get('user_id');
-        $post->type = Input::get('type');
-        $post->save();
-
-        if($post && Input::file('document'))
-        {
-            $post->type = $post->post_type->name;
-            $post->document = $this->createDocument($post->id, $post->post_type->name, Input::file('document'));
-            return response()->json($post);
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|unique:posts|max:255',
+            'user_id' => 'required',
+            'content' => 'required',
+            'type' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
         }
-       
+        else
+        {
+            $post = new Posts;
+            $post->title = Input::get('title');
+            $post->content = Input::get('content');
+            $post->user_id = Input::get('user_id');
+            $post->type = Input::get('type');
+            $post->save();
+
+            if($post && Input::file('document'))
+            {
+                $post->type = $post->post_type->name;
+                $post->document = $this->createDocument($post->id, $post->post_type->name, Input::file('document'));
+                return response()->json($post);
+            }
+        }
+        
     }
 
     public function createDocument($id, $type, $document)
