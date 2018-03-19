@@ -21,4 +21,9 @@ class Posts extends Model
         return $this->hasOne('App\Models\Document', 'post_id', 'id');
     }
 
+    public function all_comments()
+    {
+        return $this->hasMany('App\Models\Comment', 'post_id', 'id');
+    }
+
 }

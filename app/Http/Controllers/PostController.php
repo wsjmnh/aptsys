@@ -11,6 +11,7 @@ use App\User;
 // use Illuminate\Support\Facades\Validator;
 use DateTime;
 use Validator;
+use App\Models\Comment;
 
 class PostController extends Controller
 {
@@ -43,6 +44,7 @@ class PostController extends Controller
         {
             $post->type = $post->post_type->name;
             $post->document = $post->document;
+            $post->comments = $post->all_comments;
             return response()->json($post);
         }
         return response()->json(['error' => 'Not Found']);
@@ -74,6 +76,7 @@ class PostController extends Controller
                 if($post && Input::file('document'))
                 {
                     $post->type = $post->post_type->name;
+                    $post->comments = $post->all_comments;
                     $post->document = $this->createDocument($post->id, $post->post_type->name, Input::file('document'));
                     return response()->json($post);
                 }
@@ -97,6 +100,30 @@ class PostController extends Controller
         $document->post_id = $id;
         $document->save();
         return $document;
+    }
+
+    public function createPostComment(Request $request, $id)
+    {
+        $post = Posts::find($id);
+        if($post)
+        {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'comments' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors());
+            }else
+            {
+                $newComment = new Comment;
+                $newComment->post_id = $id;
+                $newComment->name = Input::get('name');
+                $newComment->comments = Input::get('comments');
+                $newComment->save();
+                return response()->json($newComment);
+            }
+        }
+        return response()->json(['error' => 'Not Found']);
     }
 
     public function deletePost($id)
