@@ -33,15 +33,14 @@ class PostController extends Controller
     public function allPosts()
     {
         $posts = Posts::select('posts.id', 'posts.user_id', 'post_type.name as type', 'posts.content', 'posts.created_at', 'posts.updated_at')
-        ->leftjoin('post_type', 'posts.type', '=', 'post_type.id')->get();
+            ->leftjoin('post_type', 'posts.type', '=', 'post_type.id')->get();
         return response()->json($posts);
     }
 
     public function getPost($id)
     {
         $post = Posts::find($id);
-        if($post)
-        {
+        if ($post) {
             $post->type = $post->post_type->name;
             $post->document = $post->document;
             $post->comments = $post->all_comments;
@@ -61,28 +60,24 @@ class PostController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
-        else
-        {
-            $user = User::find(Input::get('user_id'));
-            if($user)
-            {
-                $post = new Posts;
-                $post->title = Input::get('title');
-                $post->content = Input::get('content');
-                $post->user_id = Input::get('user_id');
-                $post->type = Input::get('type');
-                $post->save();
 
-                if($post && Input::file('document'))
-                {
-                    $post->type = $post->post_type->name;
-                    $post->comments = $post->all_comments;
-                    $post->document = $this->createDocument($post->id, $post->post_type->name, Input::file('document'));
-                    return response()->json($post);
-                }
+        $user = User::find(Input::get('user_id'));
+        if ($user) {
+            $post = new Posts;
+            $post->title = Input::get('title');
+            $post->content = Input::get('content');
+            $post->user_id = Input::get('user_id');
+            $post->type = Input::get('type');
+            $post->save();
+
+            if ($post && Input::file('document')) {
+                $post->type = $post->post_type->name;
+                $post->comments = $post->all_comments;
+                $post->document = $this->createDocument($post->id, $post->post_type->name, Input::file('document'));
+                return response()->json($post);
             }
-            return response()->json(['error' => 'User Not Found']);
         }
+        return response()->json(['error' => 'User Not Found']);
 
     }
 
@@ -91,8 +86,8 @@ class PostController extends Controller
         $originalName = $document->getClientOriginalName();
         $extension = $document->getClientOriginalExtension();
         $currentDateTime = new DateTime();
-        $fileName = $currentDateTime->format('dmYHis') . $id .'.'. $extension;
-        $destinationPath = storage_path().'/uploads/'.$type;
+        $fileName = $currentDateTime->format('dmYHis') . $id . '.' . $extension;
+        $destinationPath = storage_path() . '/uploads/' . $type;
         $upload_success = $document->move($destinationPath, $fileName);
         $document = new Document;
         $document->name = $fileName;
@@ -105,16 +100,14 @@ class PostController extends Controller
     public function createPostComment(Request $request, $id)
     {
         $post = Posts::find($id);
-        if($post)
-        {
+        if ($post) {
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'comments' => 'required',
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors());
-            }else
-            {
+            } else {
                 $newComment = new Comment;
                 $newComment->post_id = $id;
                 $newComment->name = Input::get('name');
@@ -129,8 +122,7 @@ class PostController extends Controller
     public function postComments($id)
     {
         $post = Posts::find($id);
-        if($post)
-        {
+        if ($post) {
             return response()->json($post->all_comments);
         }
         return response()->json(['error' => 'Not Found']);
@@ -139,8 +131,7 @@ class PostController extends Controller
     public function deletePost($id)
     {
         $post = Posts::find($id);
-        if($post)
-        {
+        if ($post) {
             $post->document->delete();
             $post->delete();
             return response()->json(['message' => 'Successfully Deleted']);
