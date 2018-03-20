@@ -117,6 +117,12 @@ class PostController extends Controller
             if ($validator->fails()) {
                 return response()->json($validator->errors());
             } else {
+
+                $post->comments()->create([
+                    'name' => $request->get('name'),
+                    'comments' => $request->get('comments'),
+                ]);
+
                 $newComment = new Comment;
                 $newComment->post_id = $id;
                 $newComment->name = Input::get('name');
