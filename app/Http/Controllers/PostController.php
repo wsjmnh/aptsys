@@ -47,7 +47,7 @@ class PostController extends Controller
             $post->comments = $post->all_comments;
             return response()->json($post);
         }
-        return response()->json(['error' => 'Not Found']);
+        return ['error' => 'Not Found'];
     }
 
     public function createPost(Request $request)
@@ -83,7 +83,7 @@ class PostController extends Controller
             }
             return response()->json(['error' => 'User Not Found']);
         }
-        
+
     }
 
     public function createDocument($id, $type, $document)
