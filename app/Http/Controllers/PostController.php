@@ -77,6 +77,8 @@ class PostController extends Controller
                 $post->document = $this->createDocument($post->id, $post->post_type->name, $request->file('document'));
                 return response()->json($post);
             }
+
+            //if no documents then no return?
         }
         return response()->json(['error' => 'User Not Found']);
 
