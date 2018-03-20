@@ -61,19 +61,19 @@ class PostController extends Controller
             return response()->json($validator->errors());
         }
 
-        $user = User::find(Input::get('user_id'));
+        $user = User::find($request->get('user_id'));
         if ($user) {
             $post = new Posts;
-            $post->title = Input::get('title');
-            $post->content = Input::get('content');
-            $post->user_id = Input::get('user_id');
-            $post->type = Input::get('type');
+            $post->title = $request->get('title');
+            $post->content = $request->get('content');
+            $post->user_id = $request->get('user_id');
+            $post->type = $request->get('type');
             $post->save();
 
-            if ($post && Input::file('document')) {
+            if ($post && $request->hasFile('document')) {
                 $post->type = $post->post_type->name;
                 $post->comments = $post->all_comments;
-                $post->document = $this->createDocument($post->id, $post->post_type->name, Input::file('document'));
+                $post->document = $this->createDocument($post->id, $post->post_type->name, $request->file('document'));
                 return response()->json($post);
             }
         }
