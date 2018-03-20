@@ -13,7 +13,7 @@ class Posts extends Model
 
     public function post_type()
     {
-        return $this->hasOne('App\Models\PostType', 'id', 'type');
+        return $this->hasOne(PostType::class, 'id', 'type');
     }
 
     public function document()
