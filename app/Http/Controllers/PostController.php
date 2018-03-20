@@ -71,14 +71,20 @@ class PostController extends Controller
             $post->type = $request->get('type');
             $post->save();
 
-            if ($post && $request->hasFile('document')) {
-                $post->type = $post->post_type->name;
-                $post->comments = $post->all_comments;
-                $post->document = $this->createDocument($post->id, $post->post_type->name, $request->file('document'));
-                return response()->json($post);
-            }
+//            if ($post && $request->hasFile('document')) {
+//                $post->type = $post->post_type->name;
+//                $post->comments = $post->all_comments;
+//                $post->document = $this->createDocument($post->id, $post->post_type->name, $request->file('document'));
+//                return response()->json($post);
+//            }
 
             //if no documents then no return?
+
+            if ($request->hasFile('document')) {
+                $post->document = $this->createDocument($post->id, $post->post_type->name, $request->file('document'));
+            }
+
+            return $this->getPost($post->getPostId());
         }
         return response()->json(['error' => 'User Not Found']);
 

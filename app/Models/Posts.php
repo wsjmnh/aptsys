@@ -26,4 +26,9 @@ class Posts extends Model
         return $this->hasMany('App\Models\Comment', 'post_id', 'id');
     }
 
+    public function getPostId()
+    {
+        return $this->id;
+    }
+
 }
