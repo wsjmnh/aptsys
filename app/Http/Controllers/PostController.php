@@ -147,7 +147,7 @@ class PostController extends Controller
     {
         $post = Posts::find($id);
         if ($post) {
-            $post->document->delete();
+            $post->document->delete(); // this is better to handle by Model, better to use observers
             $post->delete();
             return response()->json(['message' => 'Successfully Deleted']);
         }
